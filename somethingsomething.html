@@ -1,0 +1,91 @@
+<html>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <style>
+        article{
+            margin-left: 10%;
+            margin-right: 10%;
+            background-color: white;
+            height: 100%;
+        }
+        section{
+            background-color:yellow;
+            height: 100%;
+        }
+        input{
+            margin-left: 5%;
+        }
+        main{
+            margin-left: 5%;
+            margin-right: 5%;
+            text-align: center;
+        }
+    </style>
+    <section>
+    <article>
+    <main>
+        <h1>IMDB SEARCHING</h1>
+        <p>Put in a movie!</p>
+        <input type = 'text' id = 'searchBar'>
+        <input type = 'button' id = 'searchButton' value='Search' onclick="javascript:goTo()">
+        <div id = 'godcantstopmenow'>
+            <h2>Movie:</h2>
+            <h3 id = 'firstmovie'></h2>
+            <h2>Plot:</h2>
+            <p id = 'firstdesc'></p>
+        </div>
+        <div id = 'plsno'>
+            <h1 id = 'secondmovie'></h1>
+            <h2 id = 'seconddesc'></h1>
+        </div>
+    </main>
+    </article>
+    </section>
+    <script>
+        function goTo(){
+            $.ajax ({
+            type: "GET",
+            dataType : 'json',
+            url: 'http://www.omdbapi.com/?apikey=32ecc1e9&t=' + document.getElementById('searchBar').value,
+            success: function(response) {
+                
+                if(response.Response == 'False'){
+                    console.log(response);
+                    fillHTML(response.Error);
+                }
+                else
+                    var output1 = response.Title;
+                    var output2 = response.Plot;
+                    output1.replace('"', ' ');
+                    output2.replace('"', ' ');
+                    console.log(response);
+                    fillHTML(output1, 'firstmovie');
+                    fillHTML(output2, 'firstdesc');
+                }
+            
+            }
+        )
+        }
+        function getMovieData(movieresponse){
+            $.ajax({
+                type: "GET",
+                dataType: 'json',
+                url: 'https://tastedive.com/api/similar?k407268-Capstone-IJN6EGHH&q=' + movieresponse,
+                success: function(response){
+                    if(response.Response == 'False'){
+                    console.log(response);
+                    fillHTML(response.Error);
+                }
+                else
+                    console.log(response);
+                    fillHTML(response.Title, 'secondmovie');
+                    fillHTML(response.Plot, 'seconddesc');
+                }
+                }
+            )
+
+        }
+        function fillHTML(response, thisid){
+            document.getElementById(thisid).innerText = JSON.stringify(response);
+        }
+    </script>
+</html>
